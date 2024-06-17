@@ -47,9 +47,9 @@ def check_user_id(user_id, daily_activity_df, heart_rate_df, sleep_df):
     is_in_daily_activity = user_id in daily_activity_df['Id'].values
     is_in_heart_rate = user_id in heart_rate_df['Id'].values
     is_in_sleep = user_id in sleep_df['Id'].values
-    print(f"User {user_id} in daily activity: {user_id in daily_activity_df['Id'].unique()}")
-    print(f"User {user_id} in heart rate: {user_id in heart_rate_df['Id'].unique()}")
-    print(f"User {user_id} in sleep: {user_id in sleep_df['Id'].unique()}")
+    print(f"User {user_id} in daily activity: {is_in_daily_activity}")
+    print(f"User {user_id} in heart rate: {is_in_heart_rate}")
+    print(f"User {user_id} in sleep: {is_in_sleep}")
 
 def main():
     data_frames = load_data(data_paths)
