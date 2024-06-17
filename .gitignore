@@ -1,0 +1,12 @@
+
+# Ignore environment variables file
+.env
+
+# Other ignores
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
