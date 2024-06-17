@@ -1,0 +1,69 @@
+import pandas as pd
+
+# ALl paths for the files
+data_paths = {
+    "daily_activity_1": "data/mturkfitbit_export_3.12.16-4.11.16/Fitabase Data 3.12.16-4.11.16/dailyActivity_merged.csv",
+    "daily_activity_2": "data/mturkfitbit_export_4.12.16-5.12.16/Fitabase Data 4.12.16-5.12.16/dailyActivity_merged.csv",
+    "heart_rate_1": "data/mturkfitbit_export_3.12.16-4.11.16/Fitabase Data 3.12.16-4.11.16/heartrate_seconds_merged.csv",
+    "heart_rate_2": "data/mturkfitbit_export_4.12.16-5.12.16/Fitabase Data 4.12.16-5.12.16/heartrate_seconds_merged.csv",
+    "sleep_1": "data/mturkfitbit_export_3.12.16-4.11.16/Fitabase Data 3.12.16-4.11.16/minuteSleep_merged.csv",
+    "sleep_2": "data/mturkfitbit_export_4.12.16-5.12.16/Fitabase Data 4.12.16-5.12.16/minuteSleep_merged.csv",
+}
+
+def load_data(paths):
+    data_frames ={}
+    for key, paths in paths.items():
+        data_frames[key] = pd.read_csv(paths)
+        print(f"Loaded {key} with shape {data_frames[key].shape}")
+    return data_frames
+
+def concatenate_data(data_frames):
+    daily_activity_df = pd.concat([data_frames["daily_activity_1"], data_frames["daily_activity_2"]])
+    heart_rate_df = pd.concat([data_frames["heart_rate_1"], data_frames["heart_rate_2"]])
+    sleep_df = pd.concat([data_frames["sleep_1"], data_frames["sleep_2"]])
+    return daily_activity_df, heart_rate_df, sleep_df
+
+def missing_values(data_frames):
+    for name, df in data_frames.items():
+        missing_values = df.isnull().sum()
+        print(f"Missing values in {name}")
+        print(missing_values)
+
+def convert_dates(daily_activity_df, heart_rate_df, sleep_df):
+    daily_activity_df["ActivityDate"] = pd.to_datetime(daily_activity_df["ActivityDate"])
+    heart_rate_df["Time"] = pd.to_datetime(heart_rate_df["Time"])
+    sleep_df["date"] = pd.to_datetime(sleep_df["date"])
+    print("Dates converted to datetime format")
+
+def sample_data(daily_activity_df, heart_rate_df, sleep_df, frac=0.1):
+    sampled_users = daily_activity_df["Id"].drop_duplicates().sample(frac=frac, random_state=42)
+    sampled_daily_activity_df = daily_activity_df[daily_activity_df['Id'].isin(sampled_users)]
+    sampled_heart_rate_df = heart_rate_df[heart_rate_df
+                                          ['Id'].isin(sampled_users)]
+    sampled_sleep_df = sleep_df[sleep_df['Id'].isin(sampled_users)]
+    return sampled_daily_activity_df, sampled_heart_rate_df, sampled_sleep_df
+
+def check_user_id(user_id, daily_activity_df, heart_rate_df, sleep_df):
+    is_in_daily_activity = user_id in daily_activity_df['Id'].values
+    is_in_heart_rate = user_id in heart_rate_df['Id'].values
+    is_in_sleep = user_id in sleep_df['Id'].values
+    print(f"User {user_id} in daily activity: {user_id in daily_activity_df['Id'].unique()}")
+    print(f"User {user_id} in heart rate: {user_id in heart_rate_df['Id'].unique()}")
+    print(f"User {user_id} in sleep: {user_id in sleep_df['Id'].unique()}")
+
+def main():
+    data_frames = load_data(data_paths)
+    daily_activity_df, heart_rate_df, sleep_df = concatenate_data(data_frames)
+    missing_values(data_frames)
+    convert_dates(daily_activity_df, heart_rate_df, sleep_df)
+    sampled_daily_activity_df, sampled_heart_rate_df, sampled_sleep_df = sample_data(daily_activity_df, heart_rate_df, sleep_df)
+
+    print(f"Sampled daily activity shape: {sampled_daily_activity_df.shape}")
+    print(f"Sampled heart rate shape: {sampled_heart_rate_df.shape}")
+    print(f"Sampled sleep shape: {sampled_sleep_df.shape}")
+
+    user_id = 2022484408
+    check_user_id(user_id, sampled_daily_activity_df, sampled_heart_rate_df, sampled_sleep_df)
+
+if __name__ == "__main__":
+    main()
