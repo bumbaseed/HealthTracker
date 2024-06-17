@@ -74,6 +74,21 @@ print(sampled_heart_rate_df.shape)
 print("Shape of sampled sleep data:")
 print(sampled_sleep_df.shape)
 
+# Speficic user data to find
+user_id = 2022484408 # This user IS in all the data below.
+# This allows for further data analysis on that specific user.
+
+# find the id in other data sets
+is_in_daily_activity = user_id in daily_activity_df['Id'].values
+is_in_heart_rate = user_id in heart_rate_df['Id'].values
+is_in_sleep = user_id in sleep_df['Id'].values
+
+# prints true if the user is in the data set, false if not
+print(f"User ID {user_id} is in daily activity data: {is_in_daily_activity}")
+print(f"User ID {user_id} is in heart rate data: {is_in_heart_rate}")
+print(f"User ID {user_id} is in sleep data: {is_in_sleep}")
+
+
 # # Print the first few rows of each dataframe to confirm loading
 # print("Daily Activity Data 1:")
 # print(daily_activity_1_df.head())
